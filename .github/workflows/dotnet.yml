@@ -1,0 +1,28 @@
+name: Publish Package
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+    - 'src/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore
+      run: dotnet restore src/Polyrific.Security.CookiePolicy
+    - name: Build
+      run: dotnet build -c Release --no-restore src/Polyrific.Security.CookiePolicy
+    - name: Pack
+      run: dotnet pack -c Release --no-build --include-symbols --include-source -p:PackageVersion=$GITHUB_RUN_ID src/Polyrific.Security.CookiePolicy
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: nupkg
+        path: ./src/Polyrific.Security.CookiePolicy/bin/Release/*.nupkg
