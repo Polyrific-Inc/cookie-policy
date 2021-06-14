@@ -5,6 +5,9 @@ on:
     branches: [ main ]
     paths:
     - 'src/**'
+  release:
+    types:
+    - published
 
 jobs:
   build:
@@ -26,3 +29,15 @@ jobs:
       with:
         name: nupkg
         path: ./src/Polyrific.Security.CookiePolicy/bin/Release/*.nupkg
+  deploy:
+    needs: build
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: nupkg
+        path: ./nupkg
+    - name: Push to NuGet Feed
+      run: dotnet nuget push ./nupkg/*.nupkg --skip-duplicate --api-key $NUGET_TOKEN
