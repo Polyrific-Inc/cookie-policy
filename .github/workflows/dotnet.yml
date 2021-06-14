@@ -28,4 +28,4 @@ jobs:
         VERSION="${arrTag[2]}"
         dotnet pack -c Release --no-build --include-symbols --include-source -p:PackageVersion=$VERSION -o nupkg $PROJECT_PATH
     - name: Push to NuGet
-      run: dotnet nuget push ./nupkg/*.nupkg --source $NUGET_FEED --skip-duplicate --source  --api-key ${{secrets.NUGET_TOKEN}}
+      run: dotnet nuget push ./nupkg/*.nupkg --source $NUGET_FEED --skip-duplicate --api-key ${{secrets.NUGET_TOKEN}}
