@@ -1,10 +1,6 @@
-name: Publish Package
+name: Publish to NuGet
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-    - 'src/**'
   release:
     types:
     - published
@@ -23,21 +19,6 @@ jobs:
     - name: Build
       run: dotnet build -c Release --no-restore src/Polyrific.Security.CookiePolicy
     - name: Pack
-      run: dotnet pack -c Release --no-build --include-symbols --include-source -p:PackageVersion=$GITHUB_RUN_ID src/Polyrific.Security.CookiePolicy
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: nupkg
-        path: ./src/Polyrific.Security.CookiePolicy/bin/Release/*.nupkg
-  deploy:
-    needs: build
-    if: github.event_name == 'release'
-    runs-on: ubuntu-latest
-    steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: nupkg
-        path: ./nupkg
-    - name: Push to NuGet Feed
+      run: dotnet pack -c Release --no-build --include-symbols --include-source -p:PackageVersion=$GITHUB_REF -o nupkg src/Polyrific.Security.CookiePolicy
+    - name: Push to NuGet
       run: dotnet nuget push ./nupkg/*.nupkg --skip-duplicate --api-key $NUGET_TOKEN
