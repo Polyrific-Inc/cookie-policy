@@ -24,4 +24,4 @@ jobs:
         VERSION="${arrTag[2]}"
         dotnet pack -c Release --no-build --include-symbols --include-source -p:PackageVersion=$VERSION -o nupkg src/Polyrific.Security.CookiePolicy
     - name: Push to NuGet
-      run: dotnet nuget push ./nupkg/*.nupkg --skip-duplicate --api-key $NUGET_TOKEN
+      run: dotnet nuget push ./nupkg/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_TOKEN}}
