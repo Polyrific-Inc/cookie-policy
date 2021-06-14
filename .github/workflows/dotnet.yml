@@ -4,6 +4,10 @@ on:
   release:
     types:
     - published
+    
+env:
+  PROJECT_PATH: src/Polyrific.Security.CookiePolicy
+  NUGET_FEED: https://api.nuget.org/v3/index.json
 
 jobs:
   build:
@@ -15,13 +19,13 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Restore
-      run: dotnet restore src/Polyrific.Security.CookiePolicy
+      run: dotnet restore $PROJECT_PATH
     - name: Build
-      run: dotnet build -c Release --no-restore src/Polyrific.Security.CookiePolicy
+      run: dotnet build -c Release --no-restore $PROJECT_PATH
     - name: Pack
       run: |
         arrTag=(${GITHUB_REF//\// })
         VERSION="${arrTag[2]}"
-        dotnet pack -c Release --no-build --include-symbols --include-source -p:PackageVersion=$VERSION -o nupkg src/Polyrific.Security.CookiePolicy
+        dotnet pack -c Release --no-build --include-symbols --include-source -p:PackageVersion=$VERSION -o nupkg $PROJECT_PATH
     - name: Push to NuGet
-      run: dotnet nuget push ./nupkg/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_TOKEN}}
+      run: dotnet nuget push ./nupkg/*.nupkg --source $NUGET_FEED --skip-duplicate --source  --api-key ${{secrets.NUGET_TOKEN}}
